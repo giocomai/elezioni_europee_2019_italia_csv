@@ -80,3 +80,37 @@ comuni <- purrr::map_dfr(.x = dest_file_comuni,
 
 write_csv(x = comuni, path = file.path("elenchi","comuni.csv"))
 
+
+#####  Europee Estero\circoscrizione    (elenco circoscrizioni estero) #####
+
+
+circoscrizioni_estero_per_circoscrizione <- read_json(path = "https://eleapi.interno.gov.it/siel/PX/elenchiEE/TE/01", simplifyVector = TRUE)[["enti"]] %>% 
+  rename(cod_circoscrizione = cod_ente, circoscrizione = desc_ente)
+
+circoscrizioni_estero_per_circoscrizione
+
+write_csv(x = circoscrizioni, path = file.path("elenchi","circoscrizioni_estero_per_circoscrizione.csv"))
+
+##### Europee Estero\circoscrizione    (elenco singola nazione per circoscrizioni estero) #####
+
+
+circoscrizioni_estero_nazioni <- read_json(path = "https://eleapi.interno.gov.it/siel/PX/elenchiEEN/TE/01", simplifyVector = TRUE)[["enti"]] %>% 
+  rename(cod_circoscrizione = cod_ente, circoscrizione = desc_ente)
+
+write_csv(x = circoscrizioni_estero_nazioni, path = file.path("elenchi","circoscrizioni_estero_nazioni.csv"))
+
+
+
+######  Europee Estero\circoscrizione    (elenco singola circoscrizione tutte le nazioni estero)  ######
+
+circoscrizioni_per_nazione <- purrr::map_dfr(.x = 1:5, .f = function(x) {
+  read_json(path = paste0("https://eleapi.interno.gov.it/siel/PX/elenchiEE/TE/01/CR/", x), simplifyVector = TRUE)[["enti"]] %>% 
+    rename(cod_circoscrizione = cod_ente, circoscrizione = desc_ente)
+}, .id = "cod_circoscrizione_ita")
+
+
+
+write_csv(x = circoscrizioni_per_nazione, path = file.path("elenchi","circoscrizioni_per_nazione.csv"))
+
+
+
