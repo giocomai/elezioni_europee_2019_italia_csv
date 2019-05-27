@@ -11,3 +11,7 @@ I file csv inclusi nelle cartelle "elenchi" e "scrutini" sono condivisi solo a s
 # Istruzioni
 
 Per il corretto funzionamento degli script è necesario creare un file "useragent.txt" nella cartella principale del progetto: questo file dovrà contenere unicamente lo useragent fornito dal Ministero. Gli script funzionano unicamente se lo useragent è correttamente impostato e se la connessione avviene da un IP abilitato.
+
+# Chi sono
+
+Sono un ricercatore ad [OBCT](https://www.balcanicaucaso.org/). Scrivo codice e macino dati per [EDJNet](http://europeandatajournalism.eu/). Il mio sito è [giorgiocomai.eu](https://giorgiocomai.eu/).
