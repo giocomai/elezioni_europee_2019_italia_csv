@@ -1,4 +1,5 @@
 options(HTTPUserAgent=readLines(con = "useragent.txt", warn = FALSE))
+if (!require(pacman)) install.packages("pacman")
 pacman::p_load("tidyverse")
 
 liste_per_circoscrizione <- jsonlite::read_json(path = paste0("https://eleapi.interno.gov.it/siel/PX/getlisteE/TE/01"),
