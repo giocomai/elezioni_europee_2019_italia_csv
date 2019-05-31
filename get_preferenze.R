@@ -144,3 +144,44 @@ scrutini_preferenze_regione <- estrai_preferenze_regione(cod_combo = cod_combo)
 
 write_csv(x = scrutini_preferenze_regione, path = file.path("scrutini", "scrutini_preferenze_regione_full.csv"))
 
+
+
+##### preferenze circoscrizione #####
+
+
+estrai_preferenze_circoscrizione <- function(cod_combo, full_metadata = TRUE) {
+  cod_combo <- cod_combo %>% 
+    distinct(cod_circoscrizione, pos)
+  
+  pb <- progress_estimated(nrow(cod_combo))
+  
+  dir.create("scrutini_circoscrizione_preferenze_json", showWarnings = FALSE)
+  all_urls <- paste0("https://eleapi.interno.gov.it/siel/PX/prefeEI/TE/01/CR/", cod_combo$cod_circoscrizione, "/AG/", cod_combo$pos)
+  dest_file_circoscrizione <- paste0("scrutini_circoscrizione_preferenze_json/", cod_combo$cod_circoscrizione, "_AG_", cod_combo$pos, ".json")
+  
+  purrr::walk2(.x = all_urls, .y = dest_file_circoscrizione, .f = ~ if(file.exists(.y) == FALSE) download.file(url = .x, destfile = .y))
+  purrr::walk(.x = dest_file_circoscrizione, .f = ~ writeLines(iconv(readLines(.), from = "ISO-8859-1", to = "UTF8"), .))
+  
+  
+  if (full_metadata==TRUE) {
+    purrr::map_dfr(.x = dest_file_circoscrizione,
+                   .f = function(x) {
+                     pb$tick()$print()
+                     
+                     scrutini_temp_base <- jsonlite::read_json(path = x,
+                                                               simplifyVector = TRUE)
+                     
+                     
+                     
+                     info_temp <- tibble(descrizione = names(scrutini_temp_base$int),
+                                         dato = as.character(scrutini_temp_base$int)) %>% 
+                       spread(key = descrizione, value = dato)
+                     
+                     cbind(scrutini_temp_base$cand, scrutini_temp_base$liste, info_temp)
+                   } )
+  }
+}
+
+scrutini_preferenze_circoscrizione <- estrai_preferenze_circoscrizione(cod_combo = cod_combo)
+
+write_csv(x = scrutini_preferenze_circoscrizione, path = file.path("scrutini", "scrutini_preferenze_circoscrizione_full.csv"))
